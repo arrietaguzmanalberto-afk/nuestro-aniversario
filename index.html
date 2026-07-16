@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestra Próxima Gran Aventura 🔒❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Fondo elegante y suave con scroll habilitado */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fff5f5 0%, #f0e6ff 50%, #e8f0fe 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px; /* Espacio extra arriba y abajo */
+            color: #4a3b32;
+            overflow-y: auto; /* Permite deslizar si la pantalla es pequeña */
+            position: relative;
+        }
+
+        /* Contenedor adaptativo (Responsivo) */
+        .container {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 35px 24px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(184, 92, 92, 0.1);
+            width: 100%;
+            max-width: 420px; /* Ajustado para que el video vertical no se ensanche de más en PC */
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 10;
+            margin: 20px auto; /* Espaciado externo para evitar recortes */
+        }
+
+        h1 {
+            font-family: 'Caveat', cursive;
+            font-size: 2.8rem;
+            color: #b85c5c;
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        p.subtitle {
+            font-size: 0.9rem;
+            color: #7d6c6a;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        /* --- PASO 1: BLOQUEO POR CONTRASEÑA --- */
+        .lock-screen {
+            display: block;
+        }
+        .keyhole-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #eadecc;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            text-align: center;
+            letter-spacing: 3px;
+            outline: none;
+            transition: all 0.3s;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #4a3b32;
+        }
+        input[type="password"]:focus {
+            border-color: #b85c5c;
+            box-shadow: 0 0 10px rgba(184, 92, 92, 0.15);
+        }
+        button {
+            background-color: #b85c5c;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(184, 92, 92, 0.2);
+        }
+        button:hover {
+            background-color: #a14b4b;
+            transform: translateY(-2px);
+        }
+        .error-message {
+            color: #d9534f;
+            font-size: 0.85rem;
+            margin-top: 12px;
+            display: none;
+            font-weight: 500;
+        }
+
+        /* --- PASO 2: REVELACIÓN DE FRASE --- */
+        .success-screen {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+        }
+        .reveal-box {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px dashed #b85c5c;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        .phrase {
+            font-family: 'Caveat', cursive;
+            font-size: 1.9rem;
+            color: #b85c5c;
+            line-height: 1.3;
+        }
+        .action-btn {
+            background-color: #4a6b5d;
+            box-shadow: 0 4px 15px rgba(74, 107, 93, 0.2);
+        }
+        .action-btn:hover {
+            background-color: #3b5449;
+        }
+
+        /* --- PASO 3: VIDEO SIN BARRAS NEGRAS --- */
+        .video-screen {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+        .big-congrats {
+            font-family: 'Caveat', cursive;
+            font-size: 3.5rem;
+            color: #b85c5c;
+            margin-bottom: 5px;
+            line-height: 1.1;
+            animation: pulse 1.5s infinite;
+        }
+        
+        /* Contenedor adaptado a video vertical */
+        .video-container {
+            position: relative;
+            width: 100%;
+            border-radius: 20px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border: 2px solid #eadecc;
+            background-color: transparent; /* Eliminado el fondo negro de respaldo */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        video {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 9 / 16; /* Formato vertical exacto de celular */
+            object-fit: cover; /* Elimina las barras negras rellenando el marco de forma fluida */
+            max-height: 550px; /* Altura máxima controlada para que no se desborde */
+            display: block;
+            outline: none;
+            border-radius: 18px;
+        }
+
+        /* --- CORAZONES ANIMADOS FLOTANTES --- */
+        .heart-particle {
+            position: absolute;
+            bottom: -50px;
+            font-size: 24px;
+            user-select: none;
+            pointer-events: none;
+            z-index: 1;
+            animation: floatUp 4s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) translateX(0) scale(0.5);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-105vh) translateX(var(--random-x)) scale(1.2) rotate(var(--random-rotate));
+                opacity: 0;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainContainer">
+        
+        <div id="lockScreen" class="lock-screen">
+            <span class="keyhole-icon">🔒❤️</span>
+            <h1>Portal de Aniversario</h1>
+            <p class="subtitle">Bienvenida a nuestro espacio privado. Ingresa el código de 11 dígitos oculto en tu carta para continuar.</p>
+            
+            <input type="password" id="passwordInput" placeholder="•••••••••••" maxlength="11" pattern="[0-9]*" inputmode="numeric">
+            <div id="errorMessage" class="error-message">Buen intento, pero ese no es el código para desvestir este secreto... intenta otra vez. 😘</div>
+            
+            <button onclick="checkPassword()">Desbloquear la Magia</button>
+        </div>
+
+        <div id="successScreen" class="success-screen">
+            <span class="keyhole-icon" style="font-size: 2.5rem; margin-bottom: 10px;">🔥❤️</span>
+            <h1>¡CÓDIGO CORRECTO!</h1>
+            <p class="subtitle">Descifraste el mensaje oculto entre las líneas de tu carta:</p>
+            
+            <div class="reveal-box">
+                <p class="phrase">"FELIZ ANIVERSARIO, HOY TE CELEBRO Y EN EL VIAJE TE DESVISTO"</p>
+            </div>
+            
+            <p class="subtitle" style="margin-bottom: 20px;">Presiona abajo para comenzar nuestro recorrido interactivo de momentos inolvidables:</p>
+            
+            <button onclick="revealVideo()" class="action-btn">🚀 EMPEZAR NUESTRO VIAJE 🚀</button>
+        </div>
+
+        <div id="videoScreen" class="video-screen">
+            <h1 class="big-congrats">¡Feliz Aniversario!</h1>
+            <p class="subtitle">Aquí tienes un resumen de nuestra hermosa historia. ¡Te amo!</p>
+            
+            <div class="video-container">
+                <video id="anniversaryVideo" src="nuestro-video.mp4" controls playsinline></video>
+            </div>
+
+            <span style="font-family: 'Caveat', cursive; font-size: 1.8rem; color: #b85c5c; display: block; margin-top: 15px; margin-bottom: 10px;">❤️ Te amo de aquí al infinito ❤️</span>
+        </div>
+
+    </div>
+
+    <script>
+        let heartInterval;
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            const error = document.getElementById('errorMessage');
+            const lockScreen = document.getElementById('lockScreen');
+            const successScreen = document.getElementById('successScreen');
+            
+            const passwordCorrecto = "13133732831";
+
+            if (input === passwordCorrecto) {
+                lockScreen.style.display = 'none';
+                successScreen.style.display = 'block';
+                setTimeout(() => {
+                    successScreen.style.opacity = '1';
+                }, 50);
+            } else {
+                error.style.display = 'block';
+                const inputElement = document.getElementById('passwordInput');
+                inputElement.style.borderColor = '#d9534f';
+                setTimeout(() => {
+                    inputElement.style.borderColor = '#eadecc';
+                }, 1000);
+            }
+        }
+
+        function revealVideo() {
+            const successScreen = document.getElementById('successScreen');
+            const videoScreen = document.getElementById('videoScreen');
+            const videoElement = document.getElementById('anniversaryVideo');
+
+            successScreen.style.display = 'none';
+            
+            videoScreen.style.display = 'block';
+            setTimeout(() => {
+                videoScreen.style.opacity = '1';
+                
+                // Intenta reproducir el video de forma automática
+                videoElement.play().catch(error => {
+                    console.log("Autoreproducción prevenida por el navegador.");
+                });
+
+                // Iniciar la lluvia de corazones flotantes
+                startHeartsShower();
+            }, 50);
+        }
+
+        // Lógica para crear corazones flotantes dinámicos
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-particle');
+            
+            const heartTypes = ['❤️', '💖', '💝', '💕', '🔥', '😘'];
+            heart.innerText = heartTypes[Math.floor(Math.random() * heartTypes.length)];
+            
+            heart.style.left = Math.random() * 100 + 'vw';
+            
+            const size = Math.random() * 20 + 15; // De 15px a 35px
+            heart.style.fontSize = size + 'px';
+            
+            const randomX = (Math.random() * 200 - 100) + 'px';
+            const randomRotate = (Math.random() * 360) + 'deg';
+            heart.style.setProperty('--random-x', randomX);
+            heart.style.setProperty('--random-rotate', randomRotate);
+            
+            const duration = Math.random() * 3 + 3;
+            heart.style.animationDuration = duration + 's';
+            
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, duration * 1000);
+        }
+
+        function startHeartsShower() {
+            heartInterval = setInterval(createHeart, 300);
+        }
+
+        document.getElementById('passwordInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+    </script>
+</body>
+</html>
